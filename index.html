@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>面向对象编程 (OOP) 教程中心</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=ZCOOL+XiaoWei&family=Noto+Sans+SC:wght@300;500;700&display=swap');
+
+        :root {
+            --primary: #6366f1;
+            --secondary: #a855f7;
+            --bg: #0f172a;
+            --card-bg: #1e293b;
+            --text: #f8fafc;
+            --text-muted: #94a3b8;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Noto Sans SC', sans-serif;
+            background-color: var(--bg);
+            color: var(--text);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            overflow-x: hidden;
+        }
+
+        .background-blob {
+            position: absolute;
+            width: 500px;
+            height: 500px;
+            background: radial-gradient(circle, rgba(99, 102, 241, 0.15) 0%, rgba(168, 85, 247, 0.05) 100%);
+            border-radius: 50%;
+            filter: blur(80px);
+            z-index: -1;
+            animation: move 20s infinite alternate;
+        }
+
+        @keyframes move {
+            from { transform: translate(-50%, -50%); }
+            to { transform: translate(10%, 10%); }
+        }
+
+        h1 {
+            font-family: 'ZCOOL XiaoWei', serif;
+            font-size: 3rem;
+            margin-bottom: 1rem;
+            background: linear-gradient(to right, var(--primary), var(--secondary));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            text-align: center;
+        }
+
+        p.subtitle {
+            color: var(--text-muted);
+            margin-bottom: 3rem;
+            font-size: 1.2rem;
+            text-align: center;
+        }
+
+        .container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+            width: 100%;
+            max-width: 900px;
+        }
+
+        .card {
+            background: var(--card-bg);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 24px;
+            padding: 2rem;
+            text-decoration: none;
+            color: inherit;
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            position: relative;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+
+        .card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(45deg, transparent, rgba(255, 255, 255, 0.03), transparent);
+            transform: translateX(-100%);
+            transition: 0.6s;
+        }
+
+        .card:hover {
+            transform: translateY(-10px);
+            border-color: var(--primary);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+        }
+
+        .card:hover::before {
+            transform: translateX(100%);
+        }
+
+        .card-icon {
+            font-size: 3rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .card-title {
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+            color: var(--text);
+        }
+
+        .card-desc {
+            color: var(--text-muted);
+            font-size: 0.95rem;
+            line-height: 1.6;
+        }
+
+        .card-badge {
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 12px;
+            font-size: 0.75rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            margin-top: 1.5rem;
+            align-self: flex-start;
+        }
+
+        .badge-basic { background: rgba(99, 102, 241, 0.2); color: var(--primary); }
+        .badge-advanced { background: rgba(168, 85, 247, 0.2); color: var(--secondary); }
+
+        footer {
+            margin-top: 4rem;
+            color: var(--text-muted);
+            font-size: 0.8rem;
+        }
+    </style>
+</head>
+<body>
+    <div class="background-blob"></div>
+    
+    <h1>面向对象编程之旅</h1>
+    <p class="subtitle">探索 Python 的奥秘，从基础到进阶</p>
+
+    <div class="container">
+        <a href="oop_tutorial.html" class="card">
+            <div>
+                <div class="card-icon">🌱</div>
+                <div class="card-title">基础入门教程</div>
+                <p class="card-desc">专为初学者设计，用生动的例子讲解“类”与“对象”的核心概念。适合小学及以上学生。</p>
+            </div>
+            <span class="card-badge badge-basic">Level: Basic</span>
+        </a>
+
+        <a href="oop_advanced.html" class="card">
+            <div>
+                <div class="card-icon">🚀</div>
+                <div class="card-title">高级进阶教程</div>
+                <p class="card-desc">深入探讨继承、多态、封装等高级特性，通过实际代码案例提升编程思维。</p>
+            </div>
+            <span class="card-badge badge-advanced">Level: Advanced</span>
+        </a>
+    </div>
+
+    <footer>
+        &copy; 2026 OOP Tutorial Center • Powered by GitHub Pages
+    </footer>
+</body>
+</html>
