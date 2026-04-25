@@ -1,0 +1,521 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>🎈 小猫工厂 - 奇妙的面向对象！</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=ZCOOL+KuaiLe&display=swap');
+    
+    body {
+      font-family: 'ZCOOL KuaiLe', 'Comic Sans MS', sans-serif;
+      background: linear-gradient(135deg, #a1c4fd 0%, #c2e9fb 100%);
+      margin: 0;
+      padding: 0;
+      color: #333;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      overflow-x: hidden;
+    }
+
+    .container {
+      max-width: 800px;
+      width: 90%;
+      margin: 40px 20px;
+      background: white;
+      border-radius: 20px;
+      padding: 40px;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+      border: 4px solid #fff;
+      position: relative;
+    }
+
+    .page {
+      display: none;
+      animation: fadeIn 0.6s ease;
+    }
+
+    .page.active {
+      display: block;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(30px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    h1 {
+      text-align: center;
+      color: #ff6b6b;
+      font-size: 2.5rem;
+      text-shadow: 2px 2px 0px #ffeaa7;
+      margin-bottom: 20px;
+      letter-spacing: 2px;
+    }
+
+    .concept-card {
+      background: #fdfbfb;
+      border-radius: 15px;
+      padding: 25px;
+      margin-bottom: 30px;
+      box-shadow: 0 6px 10px rgba(0,0,0,0.05);
+      border-left: 8px solid #a29bfe;
+      transition: transform 0.3s ease;
+    }
+    
+    .concept-card:hover { transform: translateY(-5px); }
+    .concept-title { font-size: 1.8rem; color: #6c5ce7; margin-top: 0; display: flex; align-items: center; gap: 10px;}
+
+    /* Illustrations */
+    .illustration {
+      display: flex; justify-content: space-around; align-items: center;
+      margin: 20px 0; padding: 30px; background: #f1f2f6;
+      border-radius: 15px; border: 3px dashed #a4b0be; text-align: center;
+    }
+    
+    .emoji-big { font-size: 65px; line-height: 1.2; margin-bottom: 10px;}
+    .arrow { font-size: 45px; color: #b2bec3; animation: bounceRight 1.5s infinite; }
+    .arrow-down { font-size: 45px; color: #b2bec3; animation: bounceDown 1.5s infinite; margin: 20px 0; }
+    
+    @keyframes bounceRight {
+      0%, 100% { transform: translateX(0); }
+      50% { transform: translateX(15px); }
+    }
+    @keyframes bounceDown {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(15px); }
+    }
+
+    /* specific boxes */
+    .blueprint { background: #74b9ff; color: white; padding: 20px; border-radius: 15px; box-shadow: 0 5px 0 #0984e3; }
+    .cat-object { background: #ffeaa7; padding: 15px 20px; border-radius: 15px; box-shadow: 0 5px 0 #fdcb6e; transition: 0.3s;}
+    .cat-object:hover { transform: scale(1.1) rotate(5deg); }
+
+    /* Buttons */
+    .nav-buttons {
+      display: flex; justify-content: space-between; margin-top: 40px; border-top: 2px dashed #dfe6e9; padding-top: 30px;
+    }
+    button {
+      background: #ff7675; color: white; border: none; padding: 15px 30px;
+      font-size: 1.2rem; border-radius: 50px; cursor: pointer;
+      font-family: inherit; box-shadow: 0 5px 15px rgba(255, 118, 117, 0.4);
+      transition: 0.3s; font-weight: bold;
+    }
+    button:hover:not(:disabled) { transform: translateY(-3px); background: #d63031; box-shadow: 0 8px 20px rgba(214, 48, 49, 0.5); }
+    button:disabled { background: #dfe6e9; cursor: not-allowed; box-shadow: none; color: #b2bec3;}
+
+    /* Quiz */
+    .quiz-question { font-size: 1.4rem; color: #2d3436; margin-bottom: 20px; line-height: 1.5;}
+    .quiz-options { display: flex; flex-direction: column; gap: 15px; }
+    .quiz-opt { 
+      background: #f1f2f6; padding: 15px 20px; border-radius: 10px; 
+      cursor: pointer; font-size: 1.2rem; border: 3px solid #dfe6e9;
+      transition: 0.2s; font-weight: bold; color: #2d3436;
+    }
+    .quiz-opt:hover { background: #81ecec; border-color: #00cec9; color: #2d3436; }
+    .quiz-opt.correct { background: #55efc4; border-color: #00b894; color: #2d3436; animation: popIn 0.5s;}
+    .quiz-opt.wrong { background: #ff7675; border-color: #d63031; color: white; animation: shake 0.5s;}
+    
+    @keyframes popIn { 0% { transform: scale(1); } 50% { transform: scale(1.05); } 100% { transform: scale(1); } }
+    @keyframes shake { 0%, 100% { transform: translateX(0); } 25% { transform: translateX(-5px); } 75% { transform: translateX(5px); } }
+
+    .feedback { font-size: 1.3rem; margin-top: 15px; font-weight: bold; min-height: 30px;}
+    
+    .progress-bar {
+      display: flex; justify-content: center; gap: 12px; margin-bottom: 30px;
+    }
+    .dot { width: 15px; height: 15px; background: #dfe6e9; border-radius: 50%; transition: 0.4s; cursor: pointer; }
+    .dot.active { background: #ff7675; transform: scale(1.3); box-shadow: 0 0 10px rgba(255, 118, 117, 0.5);}
+    .dot.completed { background: #00b894; }
+
+    .code-span { background: #2d3436; color: #55efc4; padding: 2px 8px; border-radius: 5px; font-family: monospace; }
+  </style>
+</head>
+<body>
+
+<div class="container">
+  <h1>🎈 小猫工厂 - 奇妙的面向对象 🎈</h1>
+  
+  <div class="progress-bar" id="progress">
+    <div class="dot active" onclick="gotoPage(0)" title="类与对象"></div>
+    <div class="dot" onclick="gotoPage(1)" title="属性与方法"></div>
+    <div class="dot" onclick="gotoPage(2)" title="封装"></div>
+    <div class="dot" onclick="gotoPage(3)" title="继承"></div>
+    <div class="dot" onclick="gotoPage(4)" title="多态"></div>
+    <div class="dot" onclick="gotoPage(5)" title="互动测验"></div>
+  </div>
+
+  <!-- 第1页：类与对象复习 -->
+  <div class="page active" id="page0">
+    <div class="concept-card">
+      <h2 class="concept-title">📝 第一章：认识「类」与「对象」</h2>
+      <p style="font-size: 1.2rem;"><b>🏗️ 类 (Class)</b>：就像一份神奇的「设计图纸」或「饼干模具」。它描述了将要做出来的东西<b>有哪些特征</b>，以及<b>能做什么动作</b>，但图纸本身不是真实的猫，只是设计方案。</p>
+      <p style="font-size: 1.2rem;"><b>🐱 对象 (Object)</b>：就是用图纸真实造出来的「实物」！用猫的图纸，可以造出好多只真实的猫：黑猫汤姆、白猫泡面……它们每一只都是一个「对象」。</p>
+      <p style="background:#fff3e0; border-radius:10px; padding: 15px; font-size: 1.1rem; line-height: 1.8; color: #7d6608;">🍪 <b>换个例子更好懂：</b>「饼干模具」就是类，决定了饼干的形状；用模具压出来的每一片饼干就是对象。同一个模具能压出好多片饼干（很多对象），每片可以有不同口味（属性值不同）。</p>
+    </div>
+    <div class="illustration" style="background:#fff3e0; border-color:#ffe0b2;">
+      <div class="blueprint">
+        <div class="emoji-big">📜</div>
+        <h3>小猫图纸 <br><small>(特征与动作)</small></h3>
+      </div>
+      <div class="arrow">➡️</div>
+      <div style="display:flex; gap:15px;">
+        <div class="cat-object"><div class="emoji-big">🐈‍⬛</div><b>黑猫汤姆</b></div>
+        <div class="cat-object" style="background:#81ecec; box-shadow: 0 5px 0 #00cec9;"><div class="emoji-big">🐈</div><b>白猫泡面</b></div>
+      </div>
+    </div>
+    <p style="font-size: 1.3rem; text-align: center; color: #e17055; font-weight: bold;">⬇️ 接下来，我们一起学习图纸里最关键的两样东西：<br><b style="color:#6c5ce7; font-size:1.3rem;">「属性」和「方法」</b>，点击下一页！</p>
+  </div>
+  <!-- 第2页：属性与方法 -->
+  <div class="page" id="page1">
+    <div class="concept-card" style="border-left-color: #e84393;">
+      <h2 class="concept-title">🏷️ 第二章：属性 和 方法</h2>
+      <p style="font-size: 1.2rem; color: #c0392b;"><b>每一只猫都有自己的「特征信息」（属性）和会做的「动作」（方法）！</b></p>
+    </div>
+
+    <!-- 属性 -->
+    <div class="concept-card" style="border-left-color: #fd79a8; background: #fff5f8;">
+      <h3 style="color:#d63031; font-size:1.5rem; margin-top:0;">🏷️ 属性 (Attribute) = 对象的「特征/信息」</h3>
+      <p style="font-size: 1.15rem; line-height: 1.7;">属性就是用来<b>描述对象长什么样、有什么特点</b>的信息。就像学校每位同学都有自己的「档案」，里面写着姓名、年龄、身高……这些都是属性！<br><br>
+      在代码里，我们在 <span class="code-span">__init__</span> 方法里用 <span class="code-span">self.属性名 = 值</span> 给每只猫填写它的「档案」。其中 <span class="code-span">self</span> 就是「我自己这只猫」的意思。</p>
+      <div style="display: flex; gap: 15px; flex-wrap: wrap; margin-top: 15px;">
+        <div style="flex:1; min-width: 180px; background:#fff; border: 2px solid #fd79a8; border-radius:12px; padding: 15px; text-align:center;">
+          <div style="font-size:50px">🐱</div>
+          <b>汤姆的属性档案</b>
+          <p style="font-size: 1rem; text-align: left; margin: 8px 0;">📌 name（名字）= <b>"汤姆"</b><br>🎨 color（颜色）= <b>"黑色"</b><br>🎂 age（年龄）= <b>2</b></p>
+        </div>
+        <div style="flex:1; min-width: 180px; background:#fff; border: 2px solid #81ecec; border-radius:12px; padding: 15px; text-align:center;">
+          <div style="font-size:50px">🐈</div>
+          <b>泡面的属性档案</b>
+          <p style="font-size: 1rem; text-align: left; margin: 8px 0;">📌 name（名字）= <b>"泡面"</b><br>🎨 color（颜色）= <b>"白色"</b><br>🎂 age（年龄）= <b>3</b></p>
+        </div>
+      </div>
+    </div>
+
+    <!-- 方法 -->
+    <div class="concept-card" style="border-left-color: #6c5ce7; background: #f8f7ff;">
+      <h3 style="color:#6c5ce7; font-size:1.5rem; margin-top:0;">⚡ 方法 (Method) = 对象能做的「动作/行为」</h3>
+      <p style="font-size: 1.15rem; line-height: 1.7;">方法就像猫的「才艺」，是对象能做的事情。猫会「喵喵叫」、会「跑步」、会「睡觉」，这些都是方法！<br><br>
+      在代码里，方法用 <span class="code-span">def 动作名(self):</span> 来定义。注意写上 <span class="code-span">self</span>，这让方法知道是「哪只猫」在执行动作。</p>
+      <div style="display: flex; gap: 15px; flex-wrap: wrap; margin-top: 15px;">
+        <div style="flex:1; min-width: 130px; background:#fff; border: 2px solid #a29bfe; border-radius:12px; padding: 12px; text-align:center;">
+          <div style="font-size:40px;">😺</div><b>meow()</b><br><small style="color:#636e72;">喵喵叫的动作</small>
+        </div>
+        <div style="flex:1; min-width: 130px; background:#fff; border: 2px solid #a29bfe; border-radius:12px; padding: 12px; text-align:center;">
+          <div style="font-size:40px;">🏃</div><b>run()</b><br><small style="color:#636e72;">跑步的动作</small>
+        </div>
+        <div style="flex:1; min-width: 130px; background:#fff; border: 2px solid #a29bfe; border-radius:12px; padding: 12px; text-align:center;">
+          <div style="font-size:40px;">😴</div><b>sleep()</b><br><small style="color:#636e72;">睡觉的动作</small>
+        </div>
+      </div>
+    </div>
+
+    <!-- 代码 -->
+    <h3 style="color: #2d3436; margin-top: 10px;">💻 Python 语法：属性和方法怎么写？怎么调用？</h3>
+    <div style="background: #2d3436; color: #f5f6fa; border-radius: 15px; padding: 22px; font-family: 'Courier New', monospace; overflow-x: auto; line-height: 1.8; box-shadow: inset 0 2px 4px rgba(0,0,0,0.5);">
+<pre style="margin: 0; font-size: 1.05rem;">
+<span style="color:#00b894; font-style:italic"># ====== 第一步：定义类（图纸）======</span>
+<span style="color:#e84393; font-weight:bold">class</span> Cat:
+
+    <span style="color:#e84393; font-weight:bold">def</span> <span style="color:#74b9ff; font-weight:bold">__init__</span>(self, name, color, age):  <span style="color:#00b894; font-style:italic"># 造猫时自动调用，给每只猫填写档案</span>
+        self.name  = name    <span style="color:#fd79a8; font-weight:bold"># ← 属性：名字</span>
+        self.color = color   <span style="color:#fd79a8; font-weight:bold"># ← 属性：颜色</span>
+        self.age   = age     <span style="color:#fd79a8; font-weight:bold"># ← 属性：年龄</span>
+
+    <span style="color:#e84393; font-weight:bold">def</span> <span style="color:#74b9ff; font-weight:bold">meow</span>(self):                <span style="color:#a29bfe; font-weight:bold"># ← 方法：喵喵叫动作</span>
+        print(f"{self.name} 说：喵喵喵～我是{self.color}猫！")
+
+    <span style="color:#e84393; font-weight:bold">def</span> <span style="color:#74b9ff; font-weight:bold">run</span>(self):                 <span style="color:#a29bfe; font-weight:bold"># ← 方法：跑步动作</span>
+        print(f"{self.name} 飞速奔跑啦！🏃")
+
+<span style="color:#00b894; font-style:italic"># ====== 第二步：用图纸造猫（创建对象）======</span>
+cat1 = Cat("汤姆", "黑色", 2)   <span style="color:#00b894; font-style:italic"># 造出黑猫汤姆</span>
+cat2 = Cat("泡面", "白色", 3)   <span style="color:#00b894; font-style:italic"># 造出白猫泡面</span>
+
+<span style="color:#00b894; font-style:italic"># ====== 读取属性 → 对象.属性名（不加括号）======</span>
+print(cat1.name)    <span style="color:#00b894; font-style:italic"># 输出：汤姆</span>
+print(cat2.color)   <span style="color:#00b894; font-style:italic"># 输出：白色</span>
+print(cat1.age)     <span style="color:#00b894; font-style:italic"># 输出：2</span>
+
+<span style="color:#00b894; font-style:italic"># ====== 调用方法 → 对象.方法名()（要加括号！）======</span>
+cat1.meow()   <span style="color:#00b894; font-style:italic"># 输出：汤姆 说：喵喵喵～我是黑色猫！</span>
+cat2.meow()   <span style="color:#00b894; font-style:italic"># 输出：泡面 说：喵喵喵～我是白色猫！</span>
+cat1.run()    <span style="color:#00b894; font-style:italic"># 输出：汤姆 飞速奔跑啦！🏃</span>
+</pre>
+    </div>
+
+    <div style="background: #dfe6e9; border-radius: 12px; padding: 18px; margin-top: 20px; font-size: 1.1rem; line-height: 1.8;">
+      🔑 <b>快速记忆口诀：</b><br>
+      🏷️ <b>属性</b> = 猫「是什么、有什么」，读取用 <span class="code-span">对象.属性名</span>（不加括号）<br>
+      ⚡ <b>方法</b> = 猫「能做什么」，调用用 <span class="code-span">对象.方法名()</span>（记得加括号 <b>()</b>！）
+    </div>
+  </div>
+
+  <!-- 第3页：封装 -->
+  <div class="page" id="page2">
+    <div class="concept-card" style="border-left-color: #fdcb6e;">
+      <h2 class="concept-title">🎁 第一法宝：封装 (Encapsulation)</h2>
+      <p style="font-size: 1.3rem; color:#d35400;"><b>把复杂的危险零件藏起来，只留给你好玩的按钮！</b></p>
+      <p style="color: #636e72; font-size: 1.1rem; line-height: 1.6;">💡 <b>图解故事：</b>就像一台游戏机🕹️。游戏机里面有成千上万根复杂的电线和容易弄坏的芯片，这些就是<b>复杂的代码</b>，被一层漂亮坚固的塑料外壳“封装”藏起来了。<br>你在外面根本看不到电线，你只需要按手柄上的“跳跃”按键（<b>留出来的方法</b>），就能直接玩游戏啦！这就叫“封装”！</p>
+    </div>
+    <div class="illustration" style="background:#fef9e7; border-color:#f1c40f;">
+      <div>
+        <div class="emoji-big">⚙️🔌🧠</div>
+        <p>复杂的电线与芯片<br><small>(隐藏在里面不让碰)</small></p>
+      </div>
+      <div class="arrow">➡️📦➡️</div>
+      <div style="background:#fff; padding: 20px; border-radius: 15px; border:3px solid #f39c12">
+        <div class="emoji-big">🎮📺</div>
+        <p>漂亮的游戏机套件<br><small>(封装好，按键就能用)</small></p>
+      </div>
+    </div>
+
+    <!-- 封装代码 -->
+    <h3 style="color: #2d3436; margin-top: 30px;">💻 Python 语法：怎么写“封装”？</h3>
+    <div style="background: #2d3436; color: #f5f6fa; border-radius: 15px; padding: 20px; font-family: 'Courier New', monospace; overflow-x: auto; line-height: 1.6; box-shadow: inset 0 2px 4px rgba(0,0,0,0.5);">
+<pre style="margin: 0; font-size: 1.1rem;">
+<span style="color:#00b894; font-style:italic"># 就像设计一个游戏机类</span>
+<span style="color:#e84393; font-weight:bold">class</span> GameConsole:
+    <span style="color:#e84393; font-weight:bold">def</span> <span style="color:#74b9ff; font-weight:bold">__init__</span>(self):
+        <span style="color:#00b894; font-style:italic"># 把复杂的电线藏起来 (变量名前加下划线 _ 代表隐藏)</span>
+        self._wire_count = <span style="color:#ffeaa7">1000</span>
+        
+    <span style="color:#e84393; font-weight:bold">def</span> <span style="color:#74b9ff; font-weight:bold">jump_button</span>(self): <span style="color:#00b894; font-style:italic"># 只留出简单的相关操作方法</span>
+        print(<span style="color:#ffeaa7">"🎮 游戏角色跳起来啦！"</span>)
+
+<span style="color:#00b894; font-style:italic"># 👇 怎么调用？很简单！</span>
+my_console = GameConsole()    <span style="color:#00b894; font-style:italic"># 买一台新游戏机 (创建对象)</span>
+my_console.jump_button()      <span style="color:#00b894; font-style:italic"># 直接按按钮，根本不需要管里面的电线！</span>
+</pre>
+    </div>
+  </div>
+
+  <!-- 第4页：继承 -->
+  <div class="page" id="page3">
+    <div class="concept-card" style="border-left-color: #00b894;">
+      <h2 class="concept-title">👩‍👦 第二法宝：继承 (Inheritance)</h2>
+      <p style="font-size: 1.3rem; color:#009432;"><b>子类可以自动拥有父类的能力，还能自己学会新绝招！</b></p>
+      <p style="color: #636e72; font-size: 1.1rem; line-height: 1.6;">💡 <b>图解故事：</b>有一只猫妈妈（我们叫它<b>父类</b>），她天生就会“喵喵叫”和“跑”。<br>猫妈妈生了一只猫宝宝（我们叫它<b>子类</b>）。猫宝宝一出生，就<b>继承</b>了妈妈所有的技能，不用学就会“喵喵叫”和“跑”。而且，聪明的小猫宝宝还自己发明了新绝招：<b>“后空翻”</b>！</p>
+    </div>
+    <div class="illustration" style="background:#e8f8f5; border-color:#1abc9c; flex-direction: column;">
+      <div style="text-align:center; background:#fff; padding:15px; border-radius:15px; width:50%; box-shadow: 0 4px 0 #bdc3c7;">
+        <div class="emoji-big">🐱</div>
+        <h3 style="color:#2ecc71">猫妈妈 (父类)</h3>
+        <p>拥有技能: <span class="code-span">喵喵叫()</span> <span class="code-span">跑步()</span></p>
+      </div>
+      
+      <div class="arrow-down">⬇️ 遗传 / 学会啦 ⬇️</div>
+      
+      <div style="text-align:center; background:#ffeaa7; padding:15px; border-radius:15px; width:70%; box-shadow: 0 4px 0 #f39c12; border: 3px solid #ffb142;">
+        <div class="emoji-big">😸😼</div>
+        <h3 style="color:#e67e22">猫宝宝们 (子类)</h3>
+        <p>继承的技能: <span class="code-span">喵喵叫()</span> <span class="code-span">跑步()</span></p>
+        <p style="color:#d35400; font-weight:bold; font-size: 1.1rem;">🔥 自己领悟的新绝招: <span class="code-span">后空翻()</span></p>
+      </div>
+    </div>
+
+    <!-- 继承代码 -->
+    <h3 style="color: #2d3436; margin-top: 30px;">💻 Python 语法：怎么写“继承”？</h3>
+    <div style="background: #2d3436; color: #f5f6fa; border-radius: 15px; padding: 20px; font-family: 'Courier New', monospace; overflow-x: auto; line-height: 1.6; box-shadow: inset 0 2px 4px rgba(0,0,0,0.5);">
+<pre style="margin: 0; font-size: 1.1rem;">
+<span style="color:#00b894; font-style:italic"># 第一步：定义父类（猫妈妈）</span>
+<span style="color:#e84393; font-weight:bold">class</span> CatMom:
+    <span style="color:#e84393; font-weight:bold">def</span> <span style="color:#74b9ff; font-weight:bold">meow</span>(self):
+        print(<span style="color:#ffeaa7">"喵喵！我是猫妈妈。"</span>)
+
+<span style="color:#00b894; font-style:italic"># 第二步：定义子类，括号里写上猫妈妈的名字，表示继承她！</span>
+<span style="color:#e84393; font-weight:bold">class</span> CatBaby(CatMom): 
+    <span style="color:#e84393; font-weight:bold">def</span> <span style="color:#74b9ff; font-weight:bold">backflip</span>(self):  <span style="color:#00b894; font-style:italic"># 子类自己学会的新绝招</span>
+        print(<span style="color:#ffeaa7">"✨ 看我的后空翻！"</span>)
+
+<span style="color:#00b894; font-style:italic"># 👇 怎么调用？</span>
+baby = CatBaby()      <span style="color:#00b894; font-style:italic"># 诞生一只猫宝宝 (创建对象)</span>
+baby.meow()           <span style="color:#00b894; font-style:italic"># 调用父类的本领 (输出: 喵喵！我是猫妈妈。)</span>
+baby.backflip()       <span style="color:#00b894; font-style:italic"># 调用自己的新绝招 (输出: ✨ 看我的后空翻！)</span>
+</pre>
+    </div>
+  </div>
+
+  <!-- 第5页：多态 -->
+  <div class="page" id="page4">
+    <div class="concept-card" style="border-left-color: #0984e3;">
+      <h2 class="concept-title">🎭 第三法宝：多态 (Polymorphism)</h2>
+      <p style="font-size: 1.3rem; color:#0652DD;"><b>听到完全一样的口令，不同的对象有不同的反应！</b></p>
+      <p style="color: #636e72; font-size: 1.1rem; line-height: 1.6;">💡 <b>图解故事：</b>动物园园长（你！）对着所有的动物大喊同一个指令功能：<br><b style="color:#e84393; font-size:1.2rem;">“大家叫一声()！”</b><br>结果，小狗汪汪叫，小鸭子嘎嘎叫，小猫喵喵叫。同一个指令，大家却用自己独有的方式去执行，这就叫“多态”！</p>
+    </div>
+    <div class="illustration" style="background:#ebf5fb; border-color:#3498db; flex-wrap: wrap;">
+      <div style="width: 100%; text-align: center; margin-bottom: 20px;">
+        <div class="emoji-big" style="color:#2c3e50">📢👨‍🌾</div>
+        <h3 style="margin-bottom:0">园长发出口令</h3>
+        <span class="code-span" style="font-size: 1.2rem; background:#ff7675; color:white;">动物.叫一声()</span>
+      </div>
+      
+      <div class="arrow" style="transform: rotate(90deg); margin:10px;">⬇️</div>
+      
+      <div style="display:flex; justify-content: space-between; gap:20px; width:100%;">
+        <div style="background:#fff; padding:15px; border-radius:15px; flex:1; border:2px solid #bdc3c7;">
+          <div class="emoji-big">🐶</div>
+          <b>小狗反应</b> <br> <span style="color:#e17055">“汪汪汪！”</span>
+        </div>
+        <div style="background:#fff; padding:15px; border-radius:15px; flex:1; border:2px solid #bdc3c7;">
+          <div class="emoji-big">🦆</div>
+          <b>小鸭子反应</b> <br> <span style="color:#f1c40f">“嘎嘎嘎！”</span>
+        </div>
+        <div style="background:#fff; padding:15px; border-radius:15px; flex:1; border:2px solid #bdc3c7;">
+          <div class="emoji-big">🐱</div>
+          <b>小猫反应</b> <br> <span style="color:#a29bfe">“喵喵喵！”</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- 多态代码 -->
+    <h3 style="color: #2d3436; margin-top: 30px;">💻 Python 语法：怎么写“多态”？</h3>
+    <div style="background: #2d3436; color: #f5f6fa; border-radius: 15px; padding: 20px; font-family: 'Courier New', monospace; overflow-x: auto; line-height: 1.6; box-shadow: inset 0 2px 4px rgba(0,0,0,0.5);">
+<pre style="margin: 0; font-size: 1.1rem;">
+<span style="color:#00b894; font-style:italic"># 大家都有相同的方法名 make_sound()，但里面实现的事情不一样</span>
+<span style="color:#e84393; font-weight:bold">class</span> Dog:
+    <span style="color:#e84393; font-weight:bold">def</span> <span style="color:#74b9ff; font-weight:bold">make_sound</span>(self):
+        print(<span style="color:#ffeaa7">"🐶 汪汪汪！"</span>)
+
+<span style="color:#e84393; font-weight:bold">class</span> Duck:
+    <span style="color:#e84393; font-weight:bold">def</span> <span style="color:#74b9ff; font-weight:bold">make_sound</span>(self):
+        print(<span style="color:#ffeaa7">"🦆 嘎嘎嘎！"</span>)
+
+<span style="color:#00b894; font-style:italic"># 👇 怎么调用？园长只需写一个发令方法，传什么进来就让什么叫</span>
+<span style="color:#e84393; font-weight:bold">def</span> <span style="color:#74b9ff; font-weight:bold">animal_shout</span>(animal):
+    animal.make_sound()  <span style="color:#00b894; font-style:italic"># 统一发出“叫一声”的口令</span>
+
+<span style="color:#00b894; font-style:italic"># 传入不同对象，反应不同！这就叫多态！</span>
+animal_shout(Dog())   <span style="color:#00b894; font-style:italic"># 输出: 🐶 汪汪汪！</span>
+animal_shout(Duck())  <span style="color:#00b894; font-style:italic"># 输出: 🦆 嘎嘎嘎！</span>
+</pre>
+    </div>
+  </div>
+
+  <!-- 第6页：互动练习 -->
+  <div class="page" id="page5">
+    <h2 style="text-align:center; color:#e17055; font-size: 2.2rem; margin-bottom: 30px;">🎮 来玩个小游戏测试一下吧！🎮</h2>
+
+    <!-- Question 1 -->
+    <div class="concept-card test-card">
+      <div class="quiz-question">🦊 1. 小汽车外面有一个漂亮的车外壳，把里面危险的发动机和杂乱的齿轮都挡住了，我们只用踩油门就能开车。这体现了什么特性？</div>
+      <div class="quiz-options">
+        <div class="quiz-opt" onclick="checkAns(this, true, 'q1')">A. 封装（把复杂的东西藏起来，留出简单的方法）</div>
+        <div class="quiz-opt" onclick="checkAns(this, false, 'q1')">B. 继承（从父母那里学来的本领）</div>
+      </div>
+      <div class="feedback" id="fb-q1"></div>
+    </div>
+
+    <!-- Question 2 -->
+    <div class="concept-card test-card">
+      <div class="quiz-question">🦅 2. 所有的【鸟类】（父类）天生都会“长羽毛”。小老鹰（子类）和小麻雀（子类）一出生就会“长羽毛”，是因为它们 ______ 了鸟类？</div>
+      <div class="quiz-options">
+        <div class="quiz-opt" onclick="checkAns(this, false, 'q2')">A. 封装</div>
+        <div class="quiz-opt" onclick="checkAns(this, true, 'q2')">B. 继承</div>
+      </div>
+      <div class="feedback" id="fb-q2"></div>
+    </div>
+
+    <!-- Question 3 -->
+    <div class="concept-card test-card">
+      <div class="quiz-question">🧹 3. 你给家里的电器按下【相同的电源开关按钮】。结果电视机亮起了屏幕，扫地机器人却开始满地跑。听到相同的命令，却有不同反应，这叫什么？</div>
+      <div class="quiz-options">
+        <div class="quiz-opt" onclick="checkAns(this, true, 'q3')">A. 多态（同一个命令，不同表现）</div>
+        <div class="quiz-opt" onclick="checkAns(this, false, 'q3')">B. 继承</div>
+      </div>
+      <div class="feedback" id="fb-q3"></div>
+    </div>
+    
+    <div id="success-banner" style="display:none; text-align:center; background:#55efc4; padding:20px; border-radius:15px; margin-top:30px; border:4px dashed #00b894;">
+      <h2 style="color:#2d3436; margin:0;">🏆 恭喜通关！你已经是“面向对象”小大师啦！ 🏆</h2>
+    </div>
+  </div>
+
+  <div class="nav-buttons">
+    <button id="prevBtn" onclick="changePage(-1)" disabled>⬅️ 上一页，复习下</button>
+    <button id="nextBtn" onclick="changePage(1)">下一页，冲鸭！ ➡️</button>
+  </div>
+</div>
+
+<script>
+  let currentPage = 0;
+  const totalPages = 6;
+  let score = 0;
+
+  function gotoPage(pageIndex) {
+    if(pageIndex < 0 || pageIndex >= totalPages) return;
+    
+    // Hide current
+    document.getElementById('page' + currentPage).classList.remove('active');
+    
+    // Update dots
+    document.querySelectorAll('.dot').forEach((dot, idx) => {
+        if(idx === pageIndex) {
+            dot.classList.add('active');
+        } else {
+            dot.classList.remove('active');
+        }
+        if(idx < pageIndex) {
+            dot.classList.add('completed');
+        } else {
+            dot.classList.remove('completed');
+        }
+    });
+    
+    currentPage = pageIndex;
+    
+    // Show new
+    document.getElementById('page' + currentPage).classList.add('active');
+    
+    // Update buttons
+    document.getElementById('prevBtn').disabled = currentPage === 0;
+    
+    if (currentPage === totalPages - 1) {
+      document.getElementById('nextBtn').style.display = 'none';
+      window.scrollTo(0, 0); // Scroll up for quiz
+    } else {
+      document.getElementById('nextBtn').style.display = 'inline-block';
+      document.getElementById('nextBtn').innerText = currentPage === totalPages - 2 ? '最后一关，去答题！ 🎮' : '下一页，冲鸭！ ➡️';
+    }
+  }
+
+  function changePage(step) {
+    gotoPage(currentPage + step);
+  }
+
+  function checkAns(element, isCorrect, qId) {
+    const parent = element.parentElement;
+    // 重置并锁定
+    Array.from(parent.children).forEach(child => {
+      child.classList.remove('correct', 'wrong');
+      child.style.pointerEvents = 'none'; 
+      child.style.opacity = '0.6';
+    });
+    
+    element.style.opacity = '1';
+    
+    const fb = document.getElementById('fb-' + qId);
+    if(isCorrect) {
+      element.classList.add('correct');
+      fb.innerHTML = "✨ 答对啦！你太棒了！ 🎉 (+100分)";
+      fb.style.color = "#00b894";
+      score++;
+      
+      if(score >= 3) {
+          setTimeout(() => {
+              document.getElementById('success-banner').style.display = 'block';
+              document.getElementById('success-banner').style.animation = 'fadeIn 0.5s';
+          }, 500);
+      }
+    } else {
+      element.classList.add('wrong');
+      fb.innerHTML = "❌ 哎呀不小心选错啦，正确答案藏在上面几页里哦~";
+      fb.style.color = "#d63031";
+    }
+  }
+</script>
+
+</body>
+</html>

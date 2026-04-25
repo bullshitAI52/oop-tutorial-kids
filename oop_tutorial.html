@@ -1,0 +1,661 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>面向对象编程 — 小学四年级教程</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=ZCOOL+XiaoWei&family=Noto+Sans+SC:wght@400;700&display=swap');
+
+  :root {
+    --sky: #e0f4ff;
+    --sun: #ffd94a;
+    --grass: #6dcc88;
+    --dog: #f4a030;
+    --cat: #b07ac4;
+    --car: #e05252;
+    --ink: #1a1a2e;
+    --card: #fffdf5;
+    --border: #1a1a2e;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    background: var(--sky);
+    font-family: 'Noto Sans SC', sans-serif;
+    color: var(--ink);
+    min-height: 100vh;
+    padding: 0 0 60px;
+  }
+
+  /* HEADER */
+  header {
+    background: var(--sun);
+    border-bottom: 4px solid var(--border);
+    padding: 28px 20px 20px;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+  }
+  header::after {
+    content: '';
+    display: block;
+    height: 28px;
+    background: repeating-linear-gradient(
+      90deg,
+      var(--grass) 0 36px,
+      #5ab876 36px 72px
+    );
+    position: absolute;
+    bottom: 0; left: 0; right: 0;
+    border-top: 3px solid var(--border);
+  }
+  header h1 {
+    font-family: 'ZCOOL XiaoWei', serif;
+    font-size: 2.4rem;
+    letter-spacing: 2px;
+    line-height: 1.2;
+  }
+  header p {
+    margin-top: 6px;
+    font-size: 1rem;
+    opacity: .7;
+  }
+
+  /* PROGRESS DOTS */
+  .dots {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+    margin: 30px auto 0;
+  }
+  .dot {
+    width: 14px; height: 14px;
+    border-radius: 50%;
+    border: 3px solid var(--border);
+    background: #ccc;
+    cursor: pointer;
+    transition: background .2s, transform .15s;
+  }
+  .dot.active { background: var(--sun); transform: scale(1.3); }
+  .dot.done   { background: var(--grass); }
+
+  /* MAIN CONTENT */
+  main {
+    max-width: 700px;
+    margin: 0 auto;
+    padding: 0 16px;
+  }
+
+  /* CHAPTER CARDS */
+  .chapter {
+    display: none;
+    animation: popIn .35s cubic-bezier(.34,1.56,.64,1) both;
+  }
+  .chapter.visible { display: block; }
+
+  @keyframes popIn {
+    from { opacity: 0; transform: translateY(20px) scale(.97); }
+    to   { opacity: 1; transform: none; }
+  }
+
+  .card {
+    background: var(--card);
+    border: 3px solid var(--border);
+    border-radius: 20px;
+    padding: 26px 24px;
+    margin-top: 28px;
+    box-shadow: 5px 5px 0 var(--border);
+  }
+
+  .card-title {
+    font-family: 'ZCOOL XiaoWei', serif;
+    font-size: 1.5rem;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 14px;
+  }
+  .badge {
+    background: var(--sun);
+    border: 2px solid var(--border);
+    border-radius: 8px;
+    padding: 2px 10px;
+    font-size: .85rem;
+    font-family: 'Noto Sans SC', sans-serif;
+    font-weight: 700;
+  }
+
+  p { line-height: 1.8; font-size: 1.05rem; }
+  p + p { margin-top: 10px; }
+
+  /* ANALOGY BOX */
+  .analogy {
+    background: #fff9e0;
+    border: 2px dashed #e8c030;
+    border-radius: 12px;
+    padding: 14px 18px;
+    margin-top: 16px;
+    font-size: 1rem;
+  }
+  .analogy strong { color: #c07000; }
+
+  /* CODE BLOCK */
+  .code-wrap {
+    margin-top: 18px;
+    border: 3px solid var(--border);
+    border-radius: 14px;
+    overflow: hidden;
+    box-shadow: 4px 4px 0 var(--border);
+  }
+  .code-bar {
+    background: var(--border);
+    color: var(--sun);
+    font-size: .82rem;
+    padding: 6px 14px;
+    font-family: monospace;
+    letter-spacing: 1px;
+  }
+  pre {
+    background: #1e1e2e;
+    color: #cdd6f4;
+    padding: 18px 20px;
+    font-size: .95rem;
+    line-height: 1.75;
+    overflow-x: auto;
+    font-family: 'Courier New', monospace;
+  }
+  .kw  { color: #cba6f7; }   /* keyword */
+  .cls { color: #89dceb; }   /* class name */
+  .fn  { color: #a6e3a1; }   /* function / method */
+  .str { color: #f9e2af; }   /* string */
+  .cm  { color: #6c7086; }   /* comment */
+  .num { color: #fab387; }   /* number */
+
+  /* INTERACTIVE DEMO */
+  .demo-box {
+    background: #f0fbff;
+    border: 3px solid var(--border);
+    border-radius: 14px;
+    padding: 20px;
+    margin-top: 18px;
+    box-shadow: 4px 4px 0 var(--border);
+  }
+  .demo-box h3 {
+    font-size: 1rem;
+    margin-bottom: 14px;
+    font-family: 'ZCOOL XiaoWei', serif;
+    font-size: 1.15rem;
+  }
+  .demo-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-bottom: 12px;
+  }
+  .demo-row label { font-size: .92rem; margin-right: 4px; }
+  input[type=text], input[type=number] {
+    border: 2px solid var(--border);
+    border-radius: 8px;
+    padding: 5px 10px;
+    font-size: .95rem;
+    width: 130px;
+    font-family: 'Noto Sans SC', sans-serif;
+  }
+  button {
+    background: var(--sun);
+    border: 3px solid var(--border);
+    border-radius: 10px;
+    padding: 8px 20px;
+    font-size: .95rem;
+    font-family: 'Noto Sans SC', sans-serif;
+    font-weight: 700;
+    cursor: pointer;
+    box-shadow: 3px 3px 0 var(--border);
+    transition: transform .1s, box-shadow .1s;
+  }
+  button:active {
+    transform: translate(2px,2px);
+    box-shadow: 1px 1px 0 var(--border);
+  }
+  .output {
+    background: white;
+    border: 2px solid var(--border);
+    border-radius: 10px;
+    min-height: 48px;
+    padding: 10px 14px;
+    font-size: .95rem;
+    line-height: 1.6;
+    white-space: pre-wrap;
+    font-family: monospace;
+    margin-top: 8px;
+  }
+
+  /* ANIMAL CARDS */
+  .animals {
+    display: flex;
+    gap: 14px;
+    flex-wrap: wrap;
+    margin-top: 16px;
+  }
+  .animal-card {
+    flex: 1 1 140px;
+    border: 3px solid var(--border);
+    border-radius: 16px;
+    padding: 14px;
+    text-align: center;
+    box-shadow: 4px 4px 0 var(--border);
+    cursor: pointer;
+    transition: transform .15s;
+    user-select: none;
+  }
+  .animal-card:hover { transform: translateY(-4px); }
+  .animal-card .emoji { font-size: 2.5rem; }
+  .animal-card .name { font-weight: 700; margin: 6px 0 2px; }
+  .animal-card .sound { font-size: .85rem; color: #666; }
+  .dog-card { background: #fff0d4; }
+  .cat-card { background: #f5eeff; }
+  .cow-card { background: #e8ffe8; }
+
+  /* QUIZ */
+  .quiz-option {
+    display: block;
+    background: white;
+    border: 3px solid var(--border);
+    border-radius: 12px;
+    padding: 10px 16px;
+    margin: 8px 0;
+    cursor: pointer;
+    font-size: 1rem;
+    transition: background .15s, transform .1s;
+    box-shadow: 3px 3px 0 var(--border);
+  }
+  .quiz-option:hover { background: #fffbe0; transform: translateX(4px); }
+  .quiz-option.correct { background: #d4f5d4; border-color: #3a9a3a; }
+  .quiz-option.wrong   { background: #ffd4d4; border-color: #c03030; }
+  .quiz-result { margin-top: 10px; font-weight: 700; font-size: 1.05rem; min-height: 28px; }
+
+  /* NAV BUTTONS */
+  .nav {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 28px;
+    gap: 12px;
+  }
+  .btn-prev { background: #ddd; }
+  .btn-next { background: var(--grass); color: white; }
+</style>
+</head>
+<body>
+
+<header>
+  <h1>🐾 面向对象编程</h1>
+  <p>四年级编程入门 · 超简单版</p>
+  <div class="dots" id="dots"></div>
+</header>
+
+<main>
+
+<!-- ═══════════════ 第1章 ═══════════════ -->
+<div class="chapter visible" id="ch0">
+  <div class="card">
+    <div class="card-title"><span class="badge">第 1 章</span>什么是"对象"？🍎</div>
+    <p>你身边的每样东西都是一个<strong>对象</strong>：一只狗、一辆车、一个苹果……</p>
+    <p>每个对象有两样东西：</p>
+    <p>🟡 <strong>属性</strong>——描述它长什么样（颜色、名字、年龄……）</p>
+    <p>🟢 <strong>方法</strong>——描述它能做什么（叫、跑、吃……）</p>
+    <div class="analogy">
+      <strong>🌟 生活比喻：</strong><br>
+      一只狗 → 属性：名字叫"旺财"，颜色是黄色<br>
+      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;方法：会叫 🐶 → "汪汪！"
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">🐶 点击动物，看看它们的对象信息！</div>
+    <div class="animals">
+      <div class="animal-card dog-card" onclick="showAnimal('dog')">
+        <div class="emoji">🐶</div>
+        <div class="name">旺财（狗）</div>
+        <div class="sound">点我看属性</div>
+      </div>
+      <div class="animal-card cat-card" onclick="showAnimal('cat')">
+        <div class="emoji">🐱</div>
+        <div class="name">咪咪（猫）</div>
+        <div class="sound">点我看属性</div>
+      </div>
+      <div class="animal-card cow-card" onclick="showAnimal('cow')">
+        <div class="emoji">🐮</div>
+        <div class="name">大花（牛）</div>
+        <div class="sound">点我看属性</div>
+      </div>
+    </div>
+    <div class="output" id="animal-out">← 点击一只动物试试看！</div>
+  </div>
+
+  <div class="nav">
+    <span></span>
+    <button class="btn-next" onclick="goTo(1)">下一章 →</button>
+  </div>
+</div>
+
+<!-- ═══════════════ 第2章 ═══════════════ -->
+<div class="chapter" id="ch1">
+  <div class="card">
+    <div class="card-title"><span class="badge">第 2 章</span>什么是"类"？📋</div>
+    <p><strong>类</strong>就是一张<strong>模板</strong>，用来批量制造对象。</p>
+    <p>比如："狗"这个类就是模板，用它可以造出很多只不同的狗。</p>
+    <div class="analogy">
+      <strong>🌟 生活比喻：</strong><br>
+      类 = 饼干模具 🍪<br>
+      对象 = 用模具做出来的一块块饼干<br>
+      每块饼干形状一样，但口味可以不同！
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">📝 用 Python 写一个"狗"类</div>
+    <div class="code-wrap">
+      <div class="code-bar">🐍 dog.py</div>
+      <pre><span class="cm"># 定义一个"狗"类（模板）</span>
+<span class="kw">class</span> <span class="cls">Dog</span>:
+
+    <span class="cm"># 初始化：给狗起名字</span>
+    <span class="kw">def</span> <span class="fn">__init__</span>(<span class="kw">self</span>, name, color):
+        <span class="kw">self</span>.name  = name   <span class="cm"># 属性：名字</span>
+        <span class="kw">self</span>.color = color  <span class="cm"># 属性：颜色</span>
+
+    <span class="cm"># 方法：让狗叫</span>
+    <span class="kw">def</span> <span class="fn">bark</span>(<span class="kw">self</span>):
+        <span class="kw">print</span>(<span class="str">f"{self.name} 说：汪汪！"</span>)
+
+
+<span class="cm"># 用类造出两只狗（两个对象）</span>
+dog1 = <span class="cls">Dog</span>(<span class="str">"旺财"</span>, <span class="str">"黄色"</span>)
+dog2 = <span class="cls">Dog</span>(<span class="str">"小黑"</span>, <span class="str">"黑色"</span>)
+
+dog1.<span class="fn">bark</span>()   <span class="cm"># 旺财 说：汪汪！</span>
+dog2.<span class="fn">bark</span>()   <span class="cm"># 小黑 说：汪汪！</span></pre>
+    </div>
+  </div>
+
+  <div class="nav">
+    <button class="btn-prev" onclick="goTo(0)">← 上一章</button>
+    <button class="btn-next" onclick="goTo(2)">下一章 →</button>
+  </div>
+</div>
+
+<!-- ═══════════════ 第3章 ═══════════════ -->
+<div class="chapter" id="ch2">
+  <div class="card">
+    <div class="card-title"><span class="badge">第 3 章</span>自己造一只狗！🐕</div>
+    <p>在下面填写信息，创建你自己的狗对象，然后让它叫一声！</p>
+
+    <div class="demo-box">
+      <h3>🐶 创建一个 Dog 对象</h3>
+      <div class="demo-row">
+        <label>名字：</label>
+        <input type="text" id="dname" placeholder="例如：旺财" maxlength="8">
+        <label>颜色：</label>
+        <input type="text" id="dcolor" placeholder="例如：棕色" maxlength="8">
+      </div>
+      <div class="demo-row">
+        <button onclick="makeDog()">🐾 创建狗狗</button>
+        <button onclick="barkDog()">📢 让它叫！</button>
+        <button onclick="runDog()">🏃 让它跑！</button>
+      </div>
+      <div class="output" id="dog-out">还没有创建狗狗……</div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">📝 代码长这样</div>
+    <div class="code-wrap">
+      <div class="code-bar">🐍 my_dog.py</div>
+      <pre><span class="kw">class</span> <span class="cls">Dog</span>:
+    <span class="kw">def</span> <span class="fn">__init__</span>(<span class="kw">self</span>, name, color):
+        <span class="kw">self</span>.name  = name
+        <span class="kw">self</span>.color = color
+
+    <span class="kw">def</span> <span class="fn">bark</span>(<span class="kw">self</span>):
+        <span class="kw">print</span>(<span class="str">f"{self.name} 汪汪汪！"</span>)
+
+    <span class="kw">def</span> <span class="fn">run</span>(<span class="kw">self</span>):
+        <span class="kw">print</span>(<span class="str">f"{self.name} 跑起来了！🏃"</span>)
+
+<span class="cm"># 你填写的内容会放在这里 ↓</span>
+my_dog = <span class="cls">Dog</span>(<span class="str">"旺财"</span>, <span class="str">"黄色"</span>)
+my_dog.<span class="fn">bark</span>()</pre>
+    </div>
+  </div>
+
+  <div class="nav">
+    <button class="btn-prev" onclick="goTo(1)">← 上一章</button>
+    <button class="btn-next" onclick="goTo(3)">下一章 →</button>
+  </div>
+</div>
+
+<!-- ═══════════════ 第4章 ═══════════════ -->
+<div class="chapter" id="ch3">
+  <div class="card">
+    <div class="card-title"><span class="badge">第 4 章</span>继承：儿子像爸爸 👨‍👦</div>
+    <p><strong>继承</strong>的意思是：小类可以"继承"大类的所有东西，还能加新功能！</p>
+    <p>比如：<strong>动物</strong> 是大类，<strong>狗</strong> 和 <strong>猫</strong> 都继承自动物。</p>
+    <div class="analogy">
+      <strong>🌟 生活比喻：</strong><br>
+      动物类 = 爸爸（会呼吸、会吃东西）<br>
+      狗类 = 儿子（继承爸爸的能力，还会"汪汪叫"）<br>
+      猫类 = 女儿（继承爸爸的能力，还会"喵喵叫"）
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">📝 继承的代码</div>
+    <div class="code-wrap">
+      <div class="code-bar">🐍 animals.py</div>
+      <pre><span class="cm"># 大类：动物</span>
+<span class="kw">class</span> <span class="cls">Animal</span>:
+    <span class="kw">def</span> <span class="fn">__init__</span>(<span class="kw">self</span>, name):
+        <span class="kw">self</span>.name = name
+
+    <span class="kw">def</span> <span class="fn">eat</span>(<span class="kw">self</span>):
+        <span class="kw">print</span>(<span class="str">f"{self.name} 在吃东西 😋"</span>)
+
+
+<span class="cm"># 狗 继承自 动物</span>
+<span class="kw">class</span> <span class="cls">Dog</span>(<span class="cls">Animal</span>):
+    <span class="kw">def</span> <span class="fn">bark</span>(<span class="kw">self</span>):
+        <span class="kw">print</span>(<span class="str">f"{self.name} 说：汪汪！🐶"</span>)
+
+
+<span class="cm"># 猫 继承自 动物</span>
+<span class="kw">class</span> <span class="cls">Cat</span>(<span class="cls">Animal</span>):
+    <span class="kw">def</span> <span class="fn">meow</span>(<span class="kw">self</span>):
+        <span class="kw">print</span>(<span class="str">f"{self.name} 说：喵喵！🐱"</span>)
+
+
+d = <span class="cls">Dog</span>(<span class="str">"旺财"</span>)
+d.<span class="fn">eat</span>()    <span class="cm"># 继承自 Animal</span>
+d.<span class="fn">bark</span>()   <span class="cm"># Dog 自己的方法</span>
+
+c = <span class="cls">Cat</span>(<span class="str">"咪咪"</span>)
+c.<span class="fn">eat</span>()    <span class="cm"># 继承自 Animal</span>
+c.<span class="fn">meow</span>()  <span class="cm"># Cat 自己的方法</span></pre>
+    </div>
+  </div>
+
+  <div class="demo-box">
+    <h3>🎮 试一试继承</h3>
+    <div class="demo-row">
+      <button onclick="demoInherit('dog','eat')">🍖 旺财吃东西</button>
+      <button onclick="demoInherit('dog','bark')">🐶 旺财叫</button>
+    </div>
+    <div class="demo-row">
+      <button onclick="demoInherit('cat','eat')">🍖 咪咪吃东西</button>
+      <button onclick="demoInherit('cat','meow')">🐱 咪咪叫</button>
+    </div>
+    <div class="output" id="inherit-out">按下按钮看看结果！</div>
+  </div>
+
+  <div class="nav">
+    <button class="btn-prev" onclick="goTo(2)">← 上一章</button>
+    <button class="btn-next" onclick="goTo(4)">下一章 →</button>
+  </div>
+</div>
+
+<!-- ═══════════════ 第5章（小测验）═══════════════ -->
+<div class="chapter" id="ch4">
+  <div class="card">
+    <div class="card-title"><span class="badge">第 5 章</span>小测验 🏆</div>
+    <p>做完这3道题，你就学会面向对象的基础啦！</p>
+  </div>
+
+  <div class="card" id="q1-card">
+    <div class="card-title">❓ 问题 1</div>
+    <p>对象的"属性"指的是什么？</p>
+    <button class="quiz-option" onclick="answer(1,'A')">A. 它能做什么（比如叫、跑）</button>
+    <button class="quiz-option" onclick="answer(1,'B')">B. 描述它的信息（比如颜色、名字）✅</button>
+    <button class="quiz-option" onclick="answer(1,'C')">C. 一个大类</button>
+    <div class="quiz-result" id="qr1"></div>
+  </div>
+
+  <div class="card" id="q2-card">
+    <div class="card-title">❓ 问题 2</div>
+    <p>"类"像下面哪个东西？</p>
+    <button class="quiz-option" onclick="answer(2,'A')">A. 一块已经做好的饼干</button>
+    <button class="quiz-option" onclick="answer(2,'B')">B. 饼干模具（用来批量制造）✅</button>
+    <button class="quiz-option" onclick="answer(2,'C')">C. 烤箱</button>
+    <div class="quiz-result" id="qr2"></div>
+  </div>
+
+  <div class="card" id="q3-card">
+    <div class="card-title">❓ 问题 3</div>
+    <p>"狗类继承自动物类"是什么意思？</p>
+    <button class="quiz-option" onclick="answer(3,'A')">A. 狗和动物完全没关系</button>
+    <button class="quiz-option" onclick="answer(3,'B')">B. 狗拥有动物的所有能力，还能有自己的新能力 ✅</button>
+    <button class="quiz-option" onclick="answer(3,'C')">C. 动物继承了狗的能力</button>
+    <div class="quiz-result" id="qr3"></div>
+  </div>
+
+  <div class="card" id="finish-card" style="display:none; text-align:center;">
+    <div style="font-size:3rem;">🎉</div>
+    <div class="card-title" style="justify-content:center; margin-top:8px;">恭喜你！全部答对了！</div>
+    <p>你已经掌握了面向对象的三个核心概念：</p>
+    <p style="margin-top:10px;">🟡 <strong>对象</strong> — 有属性和方法的东西<br>
+       📋 <strong>类</strong> — 造对象的模板<br>
+       👨‍👦 <strong>继承</strong> — 子类拥有父类的能力</p>
+  </div>
+
+  <div class="nav">
+    <button class="btn-prev" onclick="goTo(3)">← 上一章</button>
+    <button class="btn-next" onclick="goTo(0)" style="background:#b07ac4;">🔄 重新开始</button>
+  </div>
+</div>
+
+</main>
+
+<script>
+  // ── Chapter navigation ──────────────────────────────
+  const total = 5;
+  let current = 0;
+  let correct = 0;
+
+  function buildDots() {
+    const c = document.getElementById('dots');
+    c.innerHTML = '';
+    for (let i = 0; i < total; i++) {
+      const d = document.createElement('div');
+      d.className = 'dot' + (i === current ? ' active' : '') + (i < current ? ' done' : '');
+      d.onclick = () => goTo(i);
+      c.appendChild(d);
+    }
+  }
+
+  function goTo(n) {
+    document.getElementById('ch' + current).classList.remove('visible');
+    current = n;
+    document.getElementById('ch' + current).classList.add('visible');
+    buildDots();
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+
+  buildDots();
+
+  // ── Chapter 1: animal info ───────────────────────────
+  const animals = {
+    dog: { emoji:'🐶', name:'旺财', color:'黄色', sound:'汪汪！', skill:'跑得很快' },
+    cat: { emoji:'🐱', name:'咪咪', color:'橙色', sound:'喵喵～', skill:'会爬树' },
+    cow: { emoji:'🐮', name:'大花', color:'黑白', sound:'哞哞～', skill:'产牛奶' },
+  };
+  function showAnimal(key) {
+    const a = animals[key];
+    document.getElementById('animal-out').textContent =
+      `${a.emoji} 对象信息：\n` +
+      `  属性 → 名字: ${a.name}，颜色: ${a.color}\n` +
+      `  属性 → 特长: ${a.skill}\n` +
+      `  方法 → 叫声: ${a.sound}`;
+  }
+
+  // ── Chapter 3: dog builder ───────────────────────────
+  let myDog = null;
+  function makeDog() {
+    const name  = document.getElementById('dname').value.trim()  || '旺财';
+    const color = document.getElementById('dcolor').value.trim() || '黄色';
+    myDog = { name, color };
+    document.getElementById('dog-out').textContent =
+      `✅ 创建成功！\n对象 my_dog:\n  name  = "${name}"\n  color = "${color}"`;
+  }
+  function barkDog() {
+    if (!myDog) { document.getElementById('dog-out').textContent = '⚠️ 先创建狗狗！'; return; }
+    document.getElementById('dog-out').textContent =
+      `${myDog.name} 说：汪汪汪！🐶`;
+  }
+  function runDog() {
+    if (!myDog) { document.getElementById('dog-out').textContent = '⚠️ 先创建狗狗！'; return; }
+    document.getElementById('dog-out').textContent =
+      `${myDog.name} 跑起来啦！🏃💨`;
+  }
+
+  // ── Chapter 4: inheritance demo ─────────────────────
+  const iData = {
+    dog: { name:'旺财',  eat:'旺财 在吃狗粮 😋', bark:'旺财 说：汪汪！🐶' },
+    cat: { name:'咪咪',  eat:'咪咪 在吃猫粮 😋', meow:'咪咪 说：喵喵！🐱' },
+  };
+  function demoInherit(animal, action) {
+    const out = document.getElementById('inherit-out');
+    out.textContent = iData[animal][action] || '...';
+  }
+
+  // ── Chapter 5: quiz ──────────────────────────────────
+  const answers = { 1:'B', 2:'B', 3:'B' };
+  const msgs    = { 1:'', 2:'', 3:'' };
+  let done = {};
+
+  function answer(q, choice) {
+    if (done[q]) return;
+    done[q] = true;
+    const btns = document.querySelectorAll('#q' + q + '-card .quiz-option');
+    btns.forEach(b => {
+      b.disabled = true;
+      if (b.textContent.startsWith(answers[q])) b.classList.add('correct');
+      else if (b.textContent.startsWith(choice)) b.classList.add('wrong');
+    });
+    const res = document.getElementById('qr' + q);
+    if (choice === answers[q]) {
+      res.textContent = '✅ 回答正确！太棒了！';
+      res.style.color = '#3a9a3a';
+      correct++;
+    } else {
+      res.textContent = '❌ 不对哦，看看绿色选项吧！';
+      res.style.color = '#c03030';
+    }
+    if (Object.keys(done).length === 3 && correct === 3) {
+      setTimeout(() => {
+        document.getElementById('finish-card').style.display = 'block';
+      }, 600);
+    }
+  }
+</script>
+</body>
+</html>

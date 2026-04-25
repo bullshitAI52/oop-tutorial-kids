@@ -1,0 +1,25 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8" />
+  <title>简单类示例 - 基础</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+</head>
+<body>
+  <h1>简单的面向对象入门示例</h1>
+  <section>
+    <h2>Python 代码</h2>
+    <pre><code class="language-python">class Person:
+    def __init__(self, name, age):
+        self.name = name
+        self.age = age
+
+    def greet(self):
+        return f"大家好，我是{self.name}，今年 {self.age} 岁。"
+
+if __name__ == "__main__":
+    p = Person("小明", 20)
+    print(p.greet())</code></pre>
+  </section>
+</body>
+</html>

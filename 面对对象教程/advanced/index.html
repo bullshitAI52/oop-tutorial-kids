@@ -1,0 +1,588 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>面向对象进阶：魔法学院之旅 🧙‍♂️</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=ZCOOL+KuaiLe&family=Nunito:wght@400;700;900&display=swap');
+
+  :root {
+    --bg-dark: #0f0c29;
+    --bg-mid: #302b63;
+    --bg-light: #24243e;
+    --accent-gold: #f6d365;
+    --accent-cyan: #00f2fe;
+    --accent-pink: #ff0844;
+    --text-main: #e0e0e0;
+    --glass-bg: rgba(255, 255, 255, 0.08);
+    --glass-border: rgba(255, 255, 255, 0.2);
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    background: linear-gradient(135deg, var(--bg-dark), var(--bg-mid), var(--bg-light));
+    background-size: 400% 400%;
+    animation: gradientBG 15s ease infinite;
+    font-family: 'Nunito', sans-serif;
+    color: var(--text-main);
+    min-height: 100vh;
+    padding: 0 0 80px;
+    overflow-x: hidden;
+  }
+
+  @keyframes gradientBG {
+    0% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
+  }
+
+  /* BACKGROUND STARS */
+  .stars {
+    position: fixed;
+    top: 0; left: 0; width: 100%; height: 100%;
+    pointer-events: none;
+    z-index: -1;
+  }
+  .star {
+    position: absolute;
+    background: white;
+    border-radius: 50%;
+    animation: twinkle linear infinite;
+  }
+  @keyframes twinkle {
+    0%, 100% { opacity: 0.2; transform: scale(0.8); }
+    50% { opacity: 1; transform: scale(1.2); box-shadow: 0 0 10px #fff; }
+  }
+
+  /* HEADER */
+  header {
+    text-align: center;
+    padding: 60px 20px 30px;
+    position: relative;
+  }
+  header h1 {
+    font-family: 'ZCOOL KuaiLe', cursive;
+    font-size: 3rem;
+    background: linear-gradient(to right, var(--accent-gold), #ffb347);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    text-shadow: 0 4px 15px rgba(246, 211, 101, 0.3);
+    letter-spacing: 2px;
+    margin-bottom: 10px;
+  }
+  header p {
+    font-size: 1.2rem;
+    color: #b8c6dc;
+    letter-spacing: 1px;
+  }
+
+  /* PROGRESS BAR */
+  .progress-container {
+    width: 250px;
+    background: rgba(0,0,0,0.4);
+    border-radius: 20px;
+    margin: 20px auto 0;
+    height: 12px;
+    border: 1px solid var(--glass-border);
+    position: relative;
+    overflow: hidden;
+  }
+  .progress-fill {
+    height: 100%;
+    background: linear-gradient(90deg, var(--accent-cyan), var(--accent-gold));
+    width: 33.3%;
+    transition: width 0.5s ease-in-out;
+    border-radius: 20px;
+    box-shadow: 0 0 10px var(--accent-cyan);
+  }
+
+  /* MAIN LAYOUT */
+  main {
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 0 20px;
+    position: relative;
+  }
+
+  .chapter {
+    display: none;
+    opacity: 0;
+    transform: translateY(30px);
+    transition: all 0.6s cubic-bezier(0.23, 1, 0.32, 1);
+  }
+  .chapter.visible {
+    display: block;
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  /* GLASSMORPHISM CARDS */
+  .glass-card {
+    background: var(--glass-bg);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    border: 1px solid var(--glass-border);
+    border-radius: 24px;
+    padding: 30px;
+    margin-top: 30px;
+    box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+  }
+
+  .card-title {
+    font-family: 'ZCOOL KuaiLe', cursive;
+    font-size: 1.8rem;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 20px;
+    color: white;
+  }
+  .card-title .icon {
+    font-size: 2.2rem;
+    filter: drop-shadow(0 0 8px rgba(255,255,255,0.4));
+  }
+
+  p {
+    font-size: 1.15rem;
+    line-height: 1.8;
+    margin-bottom: 15px;
+    color: #e2e8f0;
+  }
+  p strong { color: var(--accent-gold); }
+  
+  .highlight-box {
+    background: rgba(0, 242, 254, 0.1);
+    border-left: 4px solid var(--accent-cyan);
+    padding: 15px 20px;
+    border-radius: 0 12px 12px 0;
+    margin: 20px 0;
+    font-size: 1.1rem;
+    color: #a4cafe;
+  }
+
+  /* CODE BLOCK */
+  .code-wrap {
+    margin-top: 20px;
+    background: rgba(10, 10, 16, 0.8);
+    border: 1px solid var(--glass-border);
+    border-radius: 16px;
+    overflow: hidden;
+  }
+  .code-bar {
+    background: rgba(255, 255, 255, 0.05);
+    padding: 10px 15px;
+    font-family: monospace;
+    font-size: 0.9rem;
+    color: #8892b0;
+    border-bottom: 1px solid var(--glass-border);
+    display: flex;
+    gap: 8px;
+    align-items: center;
+  }
+  .mac-btn { width: 12px; height: 12px; border-radius: 50%; }
+  .mac-close { background: #ff5f56; }
+  .mac-min { background: #ffbd2e; }
+  .mac-max { background: #27c93f; }
+  pre {
+    padding: 20px;
+    font-family: 'Courier New', monospace;
+    font-size: 1rem;
+    line-height: 1.6;
+    overflow-x: auto;
+    color: #a6accd;
+  }
+  .k { color: #c792ea; } /* keyword */
+  .n { color: #ffcb6b; } /* class */
+  .f { color: #82aaff; } /* func */
+  .s { color: #c3e88d; } /* string */
+  .c { color: #546e7a; font-style: italic; } /* comment */
+
+  /* INTERACTIVE DEMOS */
+  .demo-area {
+    background: rgba(0,0,0,0.25);
+    border-radius: 16px;
+    padding: 25px;
+    margin-top: 20px;
+    border: 1px inset var(--glass-border);
+  }
+  .demo-area h3 {
+    font-family: 'ZCOOL KuaiLe', cursive;
+    margin-bottom: 15px;
+    color: var(--accent-cyan);
+  }
+  .btn {
+    background: linear-gradient(45deg, #4facfe 0%, #00f2fe 100%);
+    border: none;
+    border-radius: 12px;
+    padding: 10px 20px;
+    color: black;
+    font-weight: 900;
+    font-size: 1rem;
+    cursor: pointer;
+    font-family: 'Nunito', sans-serif;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 15px rgba(0, 242, 254, 0.4);
+    margin: 5px;
+  }
+  .btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(0, 242, 254, 0.6);
+  }
+  .btn-danger {
+    background: linear-gradient(45deg, #ff0844 0%, #ffb199 100%);
+    box-shadow: 0 4px 15px rgba(255, 8, 68, 0.4);
+  }
+  .btn-danger:hover {
+    box-shadow: 0 6px 20px rgba(255, 8, 68, 0.6);
+  }
+  
+  .terminal-out {
+    background: #000;
+    color: #0f0;
+    font-family: monospace;
+    padding: 15px;
+    border-radius: 10px;
+    margin-top: 15px;
+    min-height: 50px;
+    border: 1px solid #333;
+    white-space: pre-wrap;
+  }
+  .error-text { color: #ff5555; }
+  .success-text { color: #55ff55; }
+  .magic-text { color: #da70d6; }
+
+  /* CARDS FLEX LAYOUT */
+  .creatures {
+    display: flex;
+    gap: 15px;
+    margin-bottom: 15px;
+    justify-content: center;
+  }
+  .creature {
+    background: rgba(255,255,255,0.1);
+    border: 2px solid var(--glass-border);
+    border-radius: 16px;
+    padding: 15px;
+    text-align: center;
+    width: 110px;
+    transition: transform 0.3s;
+  }
+  .creature:hover {
+    transform: scale(1.1) rotate(5deg);
+    border-color: var(--accent-gold);
+    background: rgba(255,255,255,0.2);
+  }
+  .creature .emoji { font-size: 3rem; margin-bottom: 10px; }
+  .creature .name { font-weight: bold; font-family: 'ZCOOL KuaiLe', cursive; }
+
+  /* NAVIGATION */
+  .nav-controls {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 40px;
+  }
+  .nav-btn {
+    background: rgba(255,255,255,0.1);
+    color: white;
+    border: 1px solid var(--glass-border);
+    padding: 12px 25px;
+    border-radius: 30px;
+    font-size: 1.1rem;
+    cursor: pointer;
+    backdrop-filter: blur(5px);
+    transition: all 0.3s ease;
+  }
+  .nav-btn:hover {
+    background: rgba(255,255,255,0.25);
+    border-color: white;
+  }
+
+  /* QUIZ */
+  .quiz-option {
+    display: block;
+    width: 100%;
+    text-align: left;
+    background: rgba(255,255,255,0.05);
+    border: 1px solid rgba(255,255,255,0.2);
+    border-radius: 12px;
+    padding: 15px 20px;
+    margin: 10px 0;
+    color: white;
+    font-size: 1.1rem;
+    cursor: pointer;
+    transition: background 0.2s, transform 0.1s;
+  }
+  .quiz-option:hover {
+    background: rgba(255,255,255,0.15);
+    transform: translateX(10px);
+  }
+  .quiz-option.correct { background: rgba(40, 167, 69, 0.4); border-color: #28a745; }
+  .quiz-option.wrong { background: rgba(220, 53, 69, 0.4); border-color: #dc3545; }
+  .quiz-result { margin-top: 15px; font-weight: bold; font-size: 1.2rem; min-height: 30px; }
+
+</style>
+</head>
+<body>
+
+<div class="stars" id="stars"></div>
+
+<header>
+  <h1>魔法学院：面向对象进阶</h1>
+  <p>掌握高阶魔法的终极奥义！✨</p>
+  <div class="progress-container">
+    <div class="progress-fill" id="progress-bar"></div>
+  </div>
+</header>
+
+<main>
+
+  <!-- CHAPTER 1: 封装 -->
+  <div class="chapter visible" id="ch0">
+    <div class="glass-card">
+      <div class="card-title"><span class="icon">🛡️</span> 第一课：封装 (Encapsulation)</div>
+      <p>想象你的对象是一个**藏宝箱**，里面装满了金币。如果谁都能直接把手伸进箱子拿钱，那就太危险了！</p>
+      <p><strong>封装</strong> 的魔法就是给宝箱加上一层“保护罩”。想要存取金币？对不起，不能直接拿，必须通过安全守卫（也就是专门的方法）来进行。</p>
+      
+      <div class="highlight-box">
+        💡 <strong>秘语：</strong>在 Python 中，如果给属性名字前面加上两个下划线 <code>__</code> ，就像给它披上了隐形斗篷。外面的人就无法直接修改它啦！
+      </div>
+    </div>
+
+    <div class="glass-card">
+      <div class="card-title">📜 魔法咒语怎么写？</div>
+      <div class="code-wrap">
+        <div class="code-bar">
+          <div class="mac-btn mac-close"></div>
+          <div class="mac-btn mac-min"></div>
+          <div class="mac-btn mac-max"></div>
+          <span>宝箱.py</span>
+        </div>
+        <pre><span class="k">class</span> <span class="n">TreasureChest</span>:
+    <span class="k">def</span> <span class="f">__init__</span>(<span class="k">self</span>):
+        <span class="c"># 加了双下划线，金币变成了私有（隐形）的！</span>
+        <span class="k">self</span>.__coins = 100 
+        
+    <span class="k">def</span> <span class="f">add_coins</span>(<span class="k">self</span>, amount):
+        <span class="k">if</span> amount > 0:
+            <span class="k">self</span>.__coins += amount
+            <span class="k">print</span>(<span class="s">"放入金币成功！"</span>)
+        
+chest = <span class="n">TreasureChest</span>()
+<span class="c"># 如果有人想直接抢：</span>
+chest.__coins = 0  <span class="c"># ❌ 报错！小偷找不到金币！</span></pre>
+      </div>
+    </div>
+
+    <div class="glass-card">
+      <div class="demo-area">
+        <h3>💰 保护藏宝箱大作战</h3>
+        <p>你现在拥有一个金币箱，基础有 100 枚金币。小偷试图用黑客手段直接抢走：</p>
+        <div>
+          <button class="btn btn-danger" onclick="trySteal()">🦹‍♂️ 尝试直接拿走金币 ( chest.__coins = 0 )</button>
+          <button class="btn" onclick="useGuard()">👮 安全守卫放钱 ( chest.add_coins(50) )</button>
+        </div>
+        <div class="terminal-out" id="encap-out">等待操作...</div>
+      </div>
+    </div>
+
+    <div class="nav-controls">
+      <span></span>
+      <button class="nav-btn" onclick="goTo(1)">下一课 变形法术 ✨ →</button>
+    </div>
+  </div>
+
+  <!-- CHAPTER 2: 多态 -->
+  <div class="chapter" id="ch1">
+    <div class="glass-card">
+      <div class="card-title"><span class="icon">🐉</span> 第二课：多态 (Polymorphism)</div>
+      <p><strong>多态</strong> 听起来很复杂，其实就像一种魔法指令！</p>
+      <p>当你对不同的魔法生物喊出相同的咒语要求他们：“发声！”，**龙**会喷火咆哮，**猫头鹰**会咕咕叫，**魔法青蛙**会呱呱叫。</p>
+      <p>同一个指令，不同类型的对象会有<strong>不同的表现形式</strong>，这就是“多重形态”（多态）！</p>
+      
+      <div class="highlight-box">
+        💡 <strong>秘语：</strong>只要这些动物都有 <code>speak()</code> 方法，我们就可以不用管它具体是什么动物，统统对它调用 <code>speak()</code>！
+      </div>
+    </div>
+
+    <div class="glass-card">
+        <div class="card-title">📜 多态魔法咒语</div>
+        <div class="code-wrap">
+          <div class="code-bar">
+            <div class="mac-btn mac-close"></div><div class="mac-btn mac-min"></div><div class="mac-btn mac-max"></div>
+            <span>魔法时刻.py</span>
+          </div>
+          <pre><span class="k">class</span> <span class="n">Dragon</span>:
+    <span class="k">def</span> <span class="f">speak</span>(<span class="k">self</span>): <span class="k">print</span>(<span class="s">"吼嗷哦嗷！🔥"</span>)
+
+<span class="k">class</span> <span class="n">Owl</span>:
+    <span class="k">def</span> <span class="f">speak</span>(<span class="k">self</span>): <span class="k">print</span>(<span class="s">"咕咕！🌙"</span>)
+
+<span class="c"># 同一个法术函数，接受任何一只生物！</span>
+<span class="k">def</span> <span class="f">cast_voice_spell</span>(creature):
+    creature.speak()
+
+dragon = <span class="n">Dragon</span>()
+owl = <span class="n">Owl</span>()
+
+<span class="f">cast_voice_spell</span>(dragon) <span class="c"># 调用了龙的发声</span>
+<span class="f">cast_voice_spell</span>(owl)    <span class="c"># 调用了猫头鹰的发声</span></pre>
+        </div>
+      </div>
+
+    <div class="glass-card">
+      <div class="demo-area">
+        <h3>✨ 施展通用指令咒语！</h3>
+        <p>召唤一只生物，并点击下方的“全体发声”按钮，看看同样的命令，大家是如何各显神通的！</p>
+        <div class="creatures">
+            <div class="creature"><div class="emoji">🐉</div><div class="name">火龙</div></div>
+            <div class="creature"><div class="emoji">🦉</div><div class="name">猫头鹰</div></div>
+            <div class="creature"><div class="emoji">🐸</div><div class="name">魔蛙</div></div>
+        </div>
+        <div style="text-align:center;">
+          <button class="btn" style="width:200px;" onclick="polyCast()">🗣️ 全部生物：发声！</button>
+        </div>
+        <div class="terminal-out" id="poly-out">森林里静悄悄的...</div>
+      </div>
+    </div>
+
+    <div class="nav-controls">
+      <button class="nav-btn" onclick="goTo(0)">← 上一课 魔法护盾</button>
+      <button class="nav-btn" onclick="goTo(2)">最终考核 🏆 →</button>
+    </div>
+  </div>
+
+  <!-- CHAPTER 3: 考核 -->
+  <div class="chapter" id="ch2">
+    <div class="glass-card" style="text-align: center;">
+      <div class="card-title" style="justify-content: center;"><span class="icon">🎓</span> 终极魔法师考核</div>
+      <p>答对这两道题，你就拿到面向对象的高阶证书啦！</p>
+    </div>
+
+    <div class="glass-card" id="q1-card">
+      <div class="card-title">🔮 考核一</div>
+      <p>为了保护你的游戏角色生命值（HP）不被随意篡改，你应用了“封装”。你应该怎么做？</p>
+      <button class="quiz-option" onclick="answer(1,'A')">A. 给变量前面加双下划线，让它变成隐身（私有）✅</button>
+      <button class="quiz-option" onclick="answer(1,'B')">B. 创建一个非常长的名字让别人记不住</button>
+      <button class="quiz-option" onclick="answer(1,'C')">C. 让角色一直待在水里</button>
+      <div class="quiz-result" id="qr1"></div>
+    </div>
+
+    <div class="glass-card" id="q2-card">
+      <div class="card-title">🔮 考核二</div>
+      <p>你写了一个函数 <code>make_it_fly(obj)</code>，只要传入具有 <code>fly()</code> 方法的对象就能飞。你可以传苍蝇、飞龙或者魔法扫帚。这体现了什么神奇怪特？</p>
+      <button class="quiz-option" onclick="answer(2,'A')">A. 封装（Encapsulation）</button>
+      <button class="quiz-option" onclick="answer(2,'B')">B. 多态（Polymorphism）✅</button>
+      <button class="quiz-option" onclick="answer(2,'C')">C. 继承（Inheritance）</button>
+      <div class="quiz-result" id="qr2"></div>
+    </div>
+
+    <div class="glass-card" id="finish-card" style="display:none; text-align:center; background: rgba(255,215,0,0.1); border-color: var(--accent-gold);">
+      <div style="font-size:4rem; margin-bottom:10px;">🏆</div>
+      <div class="card-title" style="justify-content:center; color: var(--accent-gold); font-size:2rem;">恭喜！你已成为面向对象大魔法师！</div>
+      <p style="font-size: 1.2rem; margin-top:20px;">
+        🛡️ <strong>封装</strong>：保护数据，提供接口。<br><br>
+        🐉 <strong>多态</strong>：统一调遣，各显神通。
+      </p>
+    </div>
+
+    <div class="nav-controls">
+      <button class="nav-btn" onclick="goTo(1)">← 回顾多态</button>
+    </div>
+  </div>
+
+</main>
+
+<script>
+  // -- BACKGROUND STARS GEN --
+  const starContainer = document.getElementById('stars');
+  for (let i = 0; i < 50; i++) {
+    let star = document.createElement('div');
+    star.className = 'star';
+    star.style.width = Math.random() * 4 + 'px';
+    star.style.height = star.style.width;
+    star.style.left = Math.random() * 100 + '%';
+    star.style.top = Math.random() * 100 + '%';
+    star.style.animationDuration = (Math.random() * 3 + 2) + 's';
+    star.style.animationDelay = Math.random() * 2 + 's';
+    starContainer.appendChild(star);
+  }
+
+  // -- NAV --
+  const total = 3;
+  let current = 0;
+
+  function goTo(n) {
+    document.getElementById('ch' + current).classList.remove('visible');
+    current = n;
+    // Delay adding visible so fade takes effect
+    setTimeout(() => {
+        document.getElementById('ch' + current).classList.add('visible');
+    }, 50);
+    
+    // Update progress bar
+    document.getElementById('progress-bar').style.width = ((current + 1) / total * 100) + '%';
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+
+  // -- DEMO: ENCAPSULATION --
+  function trySteal() {
+    const out = document.getElementById('encap-out');
+    out.innerHTML = `<span class="error-text">[错误] AttributeError: 'TreasureChest' object has no attribute '__coins'</span>\n\n🛡️ 提示：金币被魔法护盾（封装）保护了，外部无法直接访问或修改双下划线属性！`;
+  }
+  function useGuard() {
+    const out = document.getElementById('encap-out');
+    out.innerHTML = `<span class="success-text">[系统] chest.add_coins(50) 调用成功！</span>\n\n💰 存入 50 枚金币！金币总数安全更新。`;
+  }
+
+  // -- DEMO: POLYMORPHISM --
+  function polyCast() {
+    const out = document.getElementById('poly-out');
+    out.innerHTML = `> cast_voice_spell(龙)\n<span class="error-text" style="color:#ffb347">吼嗷哦嗷！🔥</span>\n\n> cast_voice_spell(猫头鹰)\n<span class="magic-text">咕咕咕！🌙</span>\n\n> cast_voice_spell(魔蛙)\n<span class="success-text">呱呱呱！💧</span>\n\n✨ 提示：同样的函数，对不同的对象调用，表现出不同的形态，这就是多态！`;
+  }
+
+  // -- QUIZ --
+  const answers = { 1:'A', 2:'B' };
+  let done = {};
+  let correct = 0;
+
+  function answer(q, choice) {
+    if (done[q]) return;
+    done[q] = true;
+    const btns = document.querySelectorAll('#q' + q + '-card .quiz-option');
+    btns.forEach(b => {
+      b.disabled = true;
+      if (b.innerText.startsWith(answers[q])) b.classList.add('correct');
+      else if (b.innerText.startsWith(choice)) b.classList.add('wrong');
+    });
+    
+    const res = document.getElementById('qr' + q);
+    if (choice === answers[q]) {
+      res.innerHTML = '<span class="success-text">✅ 回答正确！你的魔法值增加了。</span>';
+      correct++;
+    } else {
+      res.innerHTML = '<span class="error-text">❌ 咒语念错了...正确答案是 ' + answers[q] + '</span>';
+    }
+
+    if (Object.keys(done).length === 2 && correct === 2) {
+      setTimeout(() => {
+        document.getElementById('finish-card').style.display = 'block';
+        // Add more stars
+        for (let i = 0; i < 50; i++) {
+          let star = document.createElement('div');
+          star.className = 'star';
+          star.style.width = '6px';
+          star.style.height = '6px';
+          star.style.background = 'gold';
+          star.style.left = Math.random() * 100 + '%';
+          star.style.top = Math.random() * 100 + '%';
+          star.style.animationDuration = '1s';
+          starContainer.appendChild(star);
+        }
+      }, 500);
+    }
+  }
+</script>
+</body>
+</html>

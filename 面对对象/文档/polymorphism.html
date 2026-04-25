@@ -1,0 +1,32 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8" />
+  <title>多态示例 - 同一接口不同实现</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+</head>
+<body>
+  <h1>多态示例</h1>
+  <section>
+    <h2>Python 代码</h2>
+    <pre><code class="language-python">class Animal:
+    def speak(self):
+        raise NotImplementedError
+
+class Dog(Animal):
+    def speak(self):
+        return "汪汪"
+
+class Cat(Animal):
+    def speak(self):
+        return "喵喵"
+
+def make_speak(a: Animal):
+    print(a.speak())
+
+if __name__ == "__main__":
+    make_speak(Dog())
+    make_speak(Cat())</code></pre>
+  </section>
+</body>
+</html>

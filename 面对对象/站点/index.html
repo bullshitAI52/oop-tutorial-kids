@@ -1,0 +1,29 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8" />
+  <title>面对对象教程 - 静态站点</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <link rel="stylesheet" href="css/styles.css" />
+  <script defer src="js/site.js"></script>
+</head>
+<body>
+  <header class="site-header">
+    <h1>面对对象教程</h1>
+    <button id="themeToggle" aria-label="切换主题">切换主题</button>
+  </header>
+  <nav class="site-nav" aria-label="章节导航">
+    <ul>
+      <li><a href="#" data-target="basics">基础示例</a></li>
+      <li><a href="#" data-target="inheritance">继承示例</a></li>
+      <li><a href="#" data-target="encapsulation">封装示例</a></li>
+      <li><a href="#" data-target="polymorphism">多态示例</a></li>
+      <li><a href="#" data-target="demo">综合演示</a></li>
+      <li><a href="../文档/index.html" target="_blank">原文档导航</a></li>
+    </ul>
+  </nav>
+  <main class="site-content">
+    <iframe id="contentFrame" src="../文档/basics.html" frameborder="0"></iframe>
+  </main>
+</body>
+</html>

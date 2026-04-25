@@ -1,0 +1,43 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8" />
+  <title>封装示例 - 私有属性与属性访问</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+</head>
+<body>
+  <h1>封装示例</h1>
+  <section>
+    <h2>Python 代码</h2>
+    <pre><code class="language-python">class Person:
+    def __init__(self, name):
+        self._name = name  # 约定的保护属性
+
+    @property
+    def name(self):
+        return self._name
+
+    @name.setter
+    def name(self, value):
+        self._name = value
+
+class SecretHolder:
+    def __init__(self, secret):
+        self.__secret = secret  # 私有属性（名字改写，外部不可直接访问）
+
+    @property
+    def secret(self):
+        return self.__secret
+
+    @secret.setter
+    def secret(self, value):
+        self.__secret = value
+
+if __name__ == "__main__":
+    p = Person("小李")
+    print(p.name)
+    s = SecretHolder("隐藏信息")
+    print(s.secret)</code></pre>
+  </section>
+</body>
+</html>

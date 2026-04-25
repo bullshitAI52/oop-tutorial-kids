@@ -1,0 +1,29 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8" />
+  <title>继承示例 - 基本演示</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+</head>
+<body>
+  <h1>继承示例</h1>
+  <section>
+    <h2>Python 代码</h2>
+    <pre><code class="language-python">class Animal:
+    def speak(self):
+        return "无声"
+
+class Dog(Animal):
+    def speak(self):
+        return "汪汪"
+
+class Cat(Animal):
+    def speak(self):
+        return "喵喵"
+
+if __name__ == "__main__":
+    for a in (Dog(), Cat()):
+        print(a.speak())</code></pre>
+  </section>
+</body>
+</html>

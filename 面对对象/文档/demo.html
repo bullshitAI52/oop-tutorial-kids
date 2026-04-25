@@ -1,0 +1,32 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8" />
+  <title>综合演示 - 组合示例</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+</head>
+<body>
+  <h1>综合演示</h1>
+  <section>
+    <h2>Python 代码</h2>
+    <pre><code class="language-python">class Person:
+    def __init__(self, name, age):
+        self.name = name
+        self.age = age
+
+class Employee(Person):
+    def __init__(self, name, age, role):
+        super().__init__(name, age)
+        self.role = role
+
+    def describe(self):
+        return f"{self.name} 是 {self.role}，{self.age} 岁"
+
+if __name__ == "__main__":
+    p = Person("小美", 28)
+    e = Employee("小美", 28, "开发者")
+    print(p.name, p.age)
+    print(e.describe())</code></pre>
+  </section>
+</body>
+</html>
